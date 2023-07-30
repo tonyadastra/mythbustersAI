@@ -91,11 +91,16 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         # print(result)
         print("Time taken to gather references + let claude fact-check it: ", time.time() - start_time)
 
-        root = ET.fromstring("<data>"+result+"</data>")
-        json_data = {}
-        json_data['score'] = float(root.find('score').text.replace(" ",""))
-        json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
-        json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
+        try:
+            root = ET.fromstring(result)
+            json_data = {}
+            json_data['score'] = float(root.find('score').text.replace(" ",""))
+            json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
+            json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
+        except:
+            print("----------------------------------------------------")
+            print("Error: ",result)
+            json_data = {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
 
         return json_data
     
@@ -109,6 +114,8 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         try:
             result_list = ast.literal_eval("[\""+completion.completion)
         except:
+            print("----------------------------------------------------")
+            print("Error: ", completion.completion)
             result_list = []
         
         return result_list
@@ -135,17 +142,17 @@ unsure_flag: a boolean (True/False) stating that the model is unsure whether the
 </response_information>
 
 <example_response>
-<score>1</score>
+<result><score>1</score>
 <reason>The claim is true, as according to cnn.com and nytimes.com, the claim was stated by the opponent in 2004.</reason>
-<unsure_flag>False</unsure_flag>
+<unsure_flag>False</unsure_flag></result>
 </example_response>"""
 
         completion = self.anthropic.completions.create(
             model="claude-instant-1.1",
-            max_tokens_to_sample=1000,
-            prompt=f"{HUMAN_PROMPT}{fact_check_prompt}{AI_PROMPT}<score>")
+            max_tokens_to_sample=10000,
+            prompt=f"{HUMAN_PROMPT}{fact_check_prompt}{AI_PROMPT}<result>")
 
-        return "<score>"+completion.completion
+        return "<result>"+completion.completion
 
     def getWikiContent(self, queries, max_sources=1):
         def fetch_sources(query, max_sources):
