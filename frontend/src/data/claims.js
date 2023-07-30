@@ -6,7 +6,7 @@ const claims = [
     claim: "I am the best president ever",
     speaker: "Donald Trump",
     speaker_id: "trump",
-    time: 0,
+    unsure_flag: true,
     score: .5,
     reason: "He is not the best president ever",
   },
@@ -15,6 +15,7 @@ const claims = [
     claim: "I am the best president ever",
     speaker: "Joe Biden",
     speaker_id: "biden",
+    
     time: 0,
     score: 0.5,
     reason: "He is the worst president ever",

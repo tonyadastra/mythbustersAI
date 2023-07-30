@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { blue, orange, red } from "@mui/material/colors";
+import { DebateContextProvider } from "./contexts/DebateContext";
 
 const theme = createTheme({
   palette: {
@@ -19,11 +20,13 @@ const theme = createTheme({
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <ThemeProvider theme={theme}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </ThemeProvider>
+  <DebateContextProvider>
+    <ThemeProvider theme={theme}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </ThemeProvider>
+  </DebateContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

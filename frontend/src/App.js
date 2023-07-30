@@ -9,20 +9,22 @@ import { Claims } from "./components/ClaimsView";
 import api from "./api";
 import AudioPlayer from "./components/Player";
 import { debateScript } from "./data/debate-script";
+import DebateContext from "./contexts/DebateContext";
 
 function App() {
+  const {transcripts, setTranscripts, claims, setClaims} = React.useContext(DebateContext);
   // const [currentIndex, setCurrentIndex] = React.useState(-1);
-  const [currentTranscripts, setCurrentTranscripts] = React.useState([]);
+  // const [transcripts, settranscripts] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [claims, setClaims] = React.useState(sampleClaims);
+  // const [claims, setClaims] = React.useState([]);
   const [inSession, setInSession] = React.useState(false);
 
   // const currentTranscript = React.useMemo(() => {
-  //   return currentTranscripts[currentIndex];
-  // }, [currentTranscripts, currentIndex]);
+  //   return transcripts[currentIndex];
+  // }, [transcripts, currentIndex]);
 
   const askQuestion = async (question) => {
-    setCurrentTranscripts([]);
+    setTranscripts([]);
 
     const res = await api.post("/generate", { question });
     console.log(res);
@@ -36,22 +38,6 @@ function App() {
     "donald_trump_rebuttal": "Lowering taxes and cutting regulations is the proven recipe for job creation and economic growth. We just need to get government out of the way and let the American people and American businesses do what they do best."
 }
     */
-
-    // setCurrentTranscripts((currentTranscripts) => {
-    //   const newTranscripts = [...currentTranscripts];
-    //   newTranscripts.push({
-    //     role: "candidate-1",
-    //     name: "Donald Trump",
-    //     text: "test",
-    //     // category: "economy",
-    //     question: "test",
-    //     audio: "",
-    //     onFinish: () => {
-    //       onFinishPlaying(newTranscripts, currentIndex);
-    //     },
-    //   });
-    //   return newTranscripts;
-    // });
 
     setInSession(true);
     setCurrentIndex(0);
@@ -81,8 +67,8 @@ function App() {
       const { audio_bytes } = res;
 
 
-      setCurrentTranscripts((currentTranscripts) => {
-        const newTranscripts = [...currentTranscripts];
+      setTranscripts((transcripts) => {
+        const newTranscripts = [...transcripts];
         newTranscripts.push({
           role: role === "elon" ? "moderator" : "candidate-" + ((i % 2) + 1),
           name:
@@ -111,8 +97,8 @@ function App() {
   };
 
   React.useEffect(() => {
-    console.log(currentTranscripts);
-  }, [currentTranscripts]);
+    console.log(transcripts);
+  }, [transcripts]);
 
   const start = async () => {
     setInSession(true);
@@ -122,12 +108,12 @@ function App() {
 
   // React.useEffect(() => {
   //   if (inSession) {
-  //     const currentTranscript = currentTranscripts[currentIndex];
+  //     const currentTranscript = transcripts[currentIndex];
   //     if (currentTranscript) {
   //       currentTranscript.onFinish();
   //     }
   //   }
-  // }, [currentIndex, currentTranscripts, inSession]);
+  // }, [currentIndex, transcripts, inSession]);
 
   return (
     <>
@@ -148,8 +134,8 @@ function App() {
               id="trump"
               setCurrentIndex={setCurrentIndex}
               transcript={
-                currentTranscripts[currentIndex]?.role === "candidate-1"
-                  ? currentTranscripts[currentIndex]
+                transcripts[currentIndex]?.role === "candidate-1"
+                  ? transcripts[currentIndex]
                   : null
               }
             />
@@ -162,8 +148,8 @@ function App() {
               id="biden"
               setCurrentIndex={setCurrentIndex}
               transcript={
-                currentTranscripts[currentIndex]?.role === "candidate-2"
-                  ? currentTranscripts[currentIndex]
+                transcripts[currentIndex]?.role === "candidate-2"
+                  ? transcripts[currentIndex]
                   : null
               }
             />
@@ -179,8 +165,8 @@ function App() {
           inSession={inSession}
           setCurrentIndex={setCurrentIndex}
           transcript={
-            currentTranscripts[currentIndex]?.role === "moderator"
-              ? currentTranscripts[currentIndex]
+            transcripts[currentIndex]?.role === "moderator"
+              ? transcripts[currentIndex]
               : null
           }
           onStart={() => {
