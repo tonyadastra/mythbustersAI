@@ -7,6 +7,8 @@ import random
 import sys
 from fastapi import FastAPI
 from pydantic import BaseModel
+import requests
+import io
 
 load_dotenv()
 
@@ -64,3 +66,63 @@ def generate_moderator_questions(client, question):
     json_data['donald_trump_rebuttal'] = root.find('rebuttal2').text
 
     return json_data
+
+
+class TextToSpeechReq(BaseModel):
+    role: str
+    transcript: str
+
+@app.post("/text-to-speech")
+async def generate(req: TextToSpeechReq):
+    apikey = os.getenv("xi-api-key")
+
+    response = generate_audio_stream(apikey, req.role, req.transcript) 
+    return response
+
+def generate_audio_stream(apikey, role, transcript):
+
+    if role == "elon":
+        video_id = "Eb1wB6y1PjLQCBQagBaG"
+    elif role == "biden":
+        video_id = "M3hnAaTIrQDWc81HGOZO"
+    elif role == "trump":
+        video_id = "eP9mKBC6jXybCf35PIwO"
+    else :
+        video_id = "Eb1wB6y1PjLQCBQagBaG"
+
+    CHUNK_SIZE = 1024
+    url = "https://api.elevenlabs.io/v1/text-to-speech/{video_id}/stream"
+    url = url.format(video_id=video_id)
+
+    print(url)
+
+    headers = {
+    "Accept": "audio/mpeg",
+    "Content-Type": "application/json",
+    "xi-api-key": apikey
+    }
+
+    data = {
+    "text": transcript,
+    "model_id": "eleven_monolingual_v1",
+    "voice_settings": {
+        "stability": 0.5,
+        "similarity_boost": 0.5
+    }
+    }
+
+    response = requests.post(url, json=data, headers=headers, stream=True)
+
+     # Create a BytesIO object to store the response content in memory
+    audio_stream = io.BytesIO()
+
+    for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+        if chunk:
+            # Write the chunk to the BytesIO stream
+            audio_stream.write(chunk)
+
+    # Rewind the stream to the start
+    audio_stream.seek(0)
+
+    # Return the in-memory stream
+    return audio_stream
