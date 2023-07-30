@@ -21,23 +21,27 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, }) {
             setCurrentIndex(nextIndex);
 
             const currentTranscript = transcripts[nextIndex - 1];
-            if (currentTranscript) {
+            if (currentTranscript && currentTranscript.role !== "moderator") {
                 const claims = await api.post('/extract_claims', {
                     paragraph: currentTranscript.text,
                     speaker: currentTranscript.name,
                     opponent: currentTranscript.name === "Donald Trump" ? "Joe Biden" : "Donald Trump",
                     moderator: "Elon Musk"
                 });
-                setClaims(
-                    claims.map(c => ({
-                        ...c,
-                        speaker_id: c.speaker === "Donald Trump" ? "trump" : "biden",
-                        loading: true,
-                    }))
-                );
-                console.log(claims);
 
-                claims.forEach(async (claim, idx) => {
+                let newClaims = claims.map(c => ({
+                    ...c,
+                    speaker_id: c.speaker === "Donald Trump" ? "trump" : "biden",
+                    loading: true,
+                }))
+
+                setClaims(
+                    newClaims
+                );
+                console.log(newClaims);
+
+
+                newClaims.forEach(async (claim, idx) => {
                     const { score, reason, unsure_flag } = await api.post('/fact_check', {
                         claim: claim.claim,
                         speaker: claim.speaker,
@@ -46,12 +50,14 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, }) {
                     });
                     console.log(score, reason, unsure_flag);
 
-                    claims[idx].loading = false;
-                    claims[idx].score = score;
-                    claims[idx].reason = reason;
-                    claims[idx].unsure_flag = unsure_flag;
-                    claims[idx].speaker_id = claim.speaker === "Donald Trump" ? "trump" : "biden";
-                    setClaims([...claims]);
+                    newClaims[idx].loading = false;
+                    newClaims[idx].score = score;
+                    newClaims[idx].reason = reason;
+                    newClaims[idx].unsure_flag = unsure_flag;
+                    newClaims[idx].speaker_id = claim.speaker_id;
+
+                    console.log(newClaims)
+                    setClaims([...newClaims]);
                 });
             }
         }
