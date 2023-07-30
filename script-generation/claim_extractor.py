@@ -33,11 +33,12 @@ class ClaimExtractor:
 this is a paragraph out of a debate between """+ paragraph["speaker"] +""" and """+ paragraph["opponent"] +""", moderated by """+ paragraph["moderator"] +""". """+ paragraph["speaker"] +""" says:
 <paragraph>"""+ paragraph["paragraph"] +"""</paragraph>
 <instruction>
-Extract all claims from the paragraph that are made by """+ paragraph["speaker"] +""" and need to be fact-checked.
+Extract all claims from the paragraph stated by """+ paragraph["speaker"] +""" which need to be fact-checked.
 Focus on claims that are targeting past events, as we cannot fact-check something that will happen in the future.
-Provide me with a python list of the claims (as quotes from the paragraph) that you have extracted.
+Provide me with a python list of all the claims that need to be fact-checked (in the form of quotes from the paragraph).
+Make sure that you include all the claims that need to be fact-checked. Do not forget any claims!
 </instruction>
-<example_response>['There are no longer any old growth forests left in France.', 'The climate of southern France can no longer support olive trees due to climate change.', 'Invasive insect species have destroyed 30% of grapevines in France.']</example_response>"""
+<example_response>["There are no longer any old growth forests left in France.", "The climate of southern France can no longer support olive trees due to climate change.", "Invasive insect species have destroyed 30 percent of grapevines in France."]</example_response>"""
 
         claims = self.anthropicGetList(claim_extraction_prompt)
         
@@ -49,7 +50,7 @@ Provide me with a python list of the claims (as quotes from the paragraph) that 
     
     def anthropicGetList(self, prompt):
         completion = self.anthropic.completions.create(
-            model="claude-instant-1.1",
+            model="claude-2",
             max_tokens_to_sample=10000,
             prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[")
         # print(completion.completion)
@@ -57,24 +58,25 @@ Provide me with a python list of the claims (as quotes from the paragraph) that 
         return result_list
 
 
-# speaker = "Donald Trump"
-# opponent = "Joe Biden"
-# moderator = "Elon Musk"
-# paragraph = "Thank you Elon. Look, let me be clear, Putin’s invasion of Ukraine is an unprovoked act of aggression that threatens democracy in Europe and beyond. My administration has led the effort to support the brave Ukrainian people with military aid, humanitarian relief and crippling sanctions on Russia. But there are still tough days ahead. We’ll continue rallying our NATO allies to stand united against Russian aggression. And I was always supplying Ukraine’s fighters with the weapons they needed to defend their homeland, even as Putin continued his brutal assaults on civilians. We’ll welcome Ukrainian refugees with open arms. Most importantly, we’ll keep standing on the side of freedom and sovereignty. Putin wants to destroy the international order. On my watch, that simply won’t happen. The free world will meet this test - democracy will prevail over tyranny."
+speaker = "Donald Trump"
+opponent = "Joe Biden"
+moderator = "Chris Wallace"
+# paragraph = "Thank you Elon. Look, let me be clear, Putin’s invasion of Ukraine is an unprovoked act of aggression that threatens democracy in Europe and beyond. My administration has led the effort to support the brave Ukrainian people with military aid, humanitarian relief and crippling sanctions on Russia. But there are still tough days ahead. We’ll continue rallying our NATO allies to stand united against Russian aggression. And I was always supplying Ukraine’s fighters with the weapons they needed to defend their homeland, even as Putin continued his brutal assaults on civilians. We’ll welcome Ukrainian refugees with open arms. Most importantly, we’ll keep standing on the side of freedom and sovereignty. Putin wants to destroy the international order. On my watch, that simply won’t happen. The free world will meet this test - democracy will prevail over tyranny. We owned the western part of Germany back then after the 2nd world war, you know!"
+paragraph = "You either do, Chris, a solicited ballot, where you’re sending it in, they’re sending it back and you’re sending. They have mailmen with lots of it. Did you see what’s going on? Take a look at West Virginia, mailman selling the ballots. They’re being sold. They’re being dumped in rivers. This is a horrible thing for our country."
 
-# claim_extractor = ClaimExtractor()
-# paragraph_dict = dict()
-# paragraph_dict["speaker"] = speaker
-# paragraph_dict["opponent"] = opponent
-# paragraph_dict["moderator"] = moderator
-# paragraph_dict["paragraph"] = paragraph
+claim_extractor = ClaimExtractor()
+paragraph_dict = dict()
+paragraph_dict["speaker"] = speaker
+paragraph_dict["opponent"] = opponent
+paragraph_dict["moderator"] = moderator
+paragraph_dict["paragraph"] = paragraph
 
-# claims = claim_extractor.extractClaims(paragraph_dict)
-# print(claims)
+claims = claim_extractor.extractClaims(paragraph_dict)
+print(claims)
 
-# truthGPT = FactChecker()
+truthGPT = FactChecker()
 
-# for claim in claims:
-#     fact_checking_result = truthGPT.factCheck(claim)
-#     print(fact_checking_result)
+for claim in claims:
+    fact_checking_result = truthGPT.factCheck(claim)
+    print(fact_checking_result)
 
