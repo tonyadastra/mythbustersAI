@@ -154,4 +154,4 @@ def generate_audio_stream(apikey, role, transcript, stream):
         audio_data_json = {
             'audio_bytes': audio_data_base64
         }
-        return json.dumps(audio_data_json)
+        return audio_data_json
