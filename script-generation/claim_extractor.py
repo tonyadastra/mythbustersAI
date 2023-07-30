@@ -18,6 +18,13 @@ load_dotenv()
 
 class ClaimExtractor:
 
+# {
+#   "paragraph": "Thank you Elon. Look, let me be clear, Putin’s invasion of Ukraine is an unprovoked act of aggression that threatens democracy in Europe and beyond. My administration has led the effort to support the brave Ukrainian people with military aid, humanitarian relief and crippling sanctions on Russia. But there are still tough days ahead. We’ll continue rallying our NATO allies to stand united against Russian aggression. And I was always supplying Ukraine’s fighters with the weapons they needed to defend their homeland, even as Putin continued his brutal assaults on civilians. We’ll welcome Ukrainian refugees with open arms. Most importantly, we’ll keep standing on the side of freedom and sovereignty. Putin wants to destroy the international order. On my watch, that simply won’t happen. The free world will meet this test - democracy will prevail over tyranny.",
+#   "speaker": "Donald Trump",
+#   "opponent": "Joe Biden",
+#   "moderator": "Elon Musk"
+# }
+
     def __init__(self):
         self.anthropic = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 

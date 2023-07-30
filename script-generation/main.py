@@ -10,6 +10,7 @@ from pydantic import BaseModel
 import requests
 import io
 from fact_checker import FactChecker
+from claim_extractor import ClaimExtractor
 import base64
 
 load_dotenv()
@@ -28,6 +29,12 @@ class ClaimInput(BaseModel):
     speaker: str
     opponent: str
 
+class ParagraphInput(BaseModel):
+    paragraph: str
+    speaker: str
+    opponent: str
+    moderator: str
+
 @app.post("/generate")
 async def generate(req: QuestionReq):
     client = init_client()
@@ -45,6 +52,19 @@ def generate(input: ClaimInput):
     fact_checking_result = truthGPT.factCheck(claim)
     print(fact_checking_result)
     return fact_checking_result
+
+@app.post("/extract_claims")
+def generate(input: ParagraphInput):
+    paragraph = dict()
+    paragraph["paragraph"]=input.paragraph
+    paragraph["speaker"] = input.speaker
+    paragraph["opponent"] = input.opponent
+    paragraph["moderator"] = input.moderator
+
+    extractor = ClaimExtractor()
+    claims = extractor.extractClaims(paragraph)
+    print(claims)
+    return claims
     
 def generate_moderator_questions(client, question):
 
