@@ -23,8 +23,8 @@ class FactChecker:
 #   "opponent": "Joe Biden"
 # }
 
-    def __init__(self):
-        self.anthropic = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    def __init__(self, client):
+        self.anthropic = client
 
 
     def factCheck(self, claim):

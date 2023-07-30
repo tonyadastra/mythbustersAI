@@ -25,8 +25,8 @@ class ClaimExtractor:
 #   "moderator": "Elon Musk"
 # }
 
-    def __init__(self):
-        self.anthropic = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    def __init__(self, client):
+        self.anthropic = client
 
     def extractClaims(self, paragraph):
         claim_extraction_prompt = """

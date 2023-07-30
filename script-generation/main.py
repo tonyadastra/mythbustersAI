@@ -22,6 +22,8 @@ def init_client():
     client = anthropic.Client(api_key=os.getenv("ANTHROPIC_API_KEY"))
     return client
 
+client = init_client()
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware, allow_origins=['*'], allow_methods=['*'],
@@ -45,7 +47,6 @@ class ParagraphInput(BaseModel):
 @app.post("/generate")
 async def generate(req: QuestionReq):
     print("received question: ", req)
-    client = init_client()
     response = generate_moderator_questions(client, req.question) 
     return response
 
@@ -56,7 +57,7 @@ def fact_check(input: ClaimInput):
     claim["speaker"] = input.speaker
     claim["opponent"] = input.opponent
 
-    truthGPT = FactChecker()
+    truthGPT = FactChecker(client)
     fact_checking_result = truthGPT.factCheck(claim)
     print(fact_checking_result)
     return fact_checking_result
@@ -69,7 +70,7 @@ def extract_claims(input: ParagraphInput):
     paragraph["opponent"] = input.opponent
     paragraph["moderator"] = input.moderator
 
-    extractor = ClaimExtractor()
+    extractor = ClaimExtractor(client)
     claims = extractor.extractClaims(paragraph)
     print(claims)
     return claims
