@@ -41,41 +41,41 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
 <example_response>["Flora of France","Geography of Italy","Climate of France"]</example_response>"""
 
         start_time = time.time()
-        print("Starting..")
+        # print("Starting..")
 
         # Get list of queries
         time2 = time.time()
         wikipedia_queries = self.anthropicGetList(wikipedia_prompt)
-        print("Time wiki queries: ", time.time() - time2)
+        # print("Time wiki queries: ", time.time() - time2)
         time2 = time.time()
         google_search_queries = self.anthropicGetList(google_search_prompt)
-        print("Time google queries: ", time.time() - time2)
+        # print("Time google queries: ", time.time() - time2)
         time2 = time.time()
 
         # Search the web
         wiki_results = self.getWikiContent(wikipedia_queries)
-        print("get wiki content: ", time.time() - time2)
+        # print("get wiki content: ", time.time() - time2)
         time2 = time.time()
         google_results = self.googleSearch(google_search_queries)
-        print("get google content: ", time.time() - time2)
+        # print("get google content: ", time.time() - time2)
         time2 = time.time()
 
         all_results = google_results + wiki_results
 
-        print("Time taken to gather references: ", time.time() - start_time)
+        # print("Time taken to gather references: ", time.time() - start_time)
 
-        print(len(all_results))
+        # print(len(all_results))
 
-        for result in all_results:
-            print(result["url"])
-            print("----------------------------------------------------")
+        # for result in all_results:
+        #     print(result["url"])
+        #     print("----------------------------------------------------")
 
-        print("Fact-checking...")
+        # print("Fact-checking...")
         time2 = time.time()
         result = self.anthropicFactCheck(claim, all_results)
-        print("fact-check: ", time.time() - time2)
+        # print("fact-check: ", time.time() - time2)
 
-        print(result)
+        # print(result)
         print("Time taken to gather references + let claude fact-check it: ", time.time() - start_time)
 
         root = ET.fromstring("<data>"+result+"</data>")
