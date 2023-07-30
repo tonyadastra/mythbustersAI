@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
 import io
-
+from fact_checker import FactChecker
 load_dotenv()
 
 def init_client():
@@ -21,11 +21,28 @@ app = FastAPI()
 class QuestionReq(BaseModel):
     question: str
 
+class ClaimInput(BaseModel):
+    claim: str
+    speaker: str
+    opponent: str
+
 @app.post("/generate")
 async def generate(req: QuestionReq):
     client = init_client()
     response = generate_moderator_questions(client, req.question) 
     return response
+
+@app.post("/fact_check")
+def generate(input: ClaimInput):
+    claim = dict()
+    claim["claim"]=input.claim
+    claim["speaker"] = input.speaker
+    claim["opponent"] = input.opponent
+
+    truthGPT = FactChecker()
+    fact_checking_result = truthGPT.factCheck(claim)
+    print(fact_checking_result)
+    return fact_checking_result
     
 def generate_moderator_questions(client, question):
 
