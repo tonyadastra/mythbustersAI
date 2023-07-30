@@ -1,0 +1,1 @@
+Answer the following question in the style of Donald Trump, with temperature=1.0. Use inflammatory language and logical fallacies in your response: 
