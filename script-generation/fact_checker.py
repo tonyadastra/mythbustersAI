@@ -66,9 +66,11 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
 
         # print(len(all_results))
 
-        # for result in all_results:
-        #     print(result["url"])
-        #     print("----------------------------------------------------")
+        references_for_fact_checking = []
+        for result in all_results:
+            references_for_fact_checking.append(result["url"])
+            # print(result["url"])
+            # print("----------------------------------------------------")
 
         # print("Fact-checking...")
         time2 = time.time()
@@ -81,7 +83,7 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         root = ET.fromstring("<data>"+result+"</data>")
         json_data = {}
         json_data['score'] = float(root.find('score').text)
-        json_data['reason'] = root.find('reason').text
+        json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
         json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
 
         return json_data
