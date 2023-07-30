@@ -106,10 +106,17 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
     
 
     def anthropicGetList(self, prompt):
-        completion = self.anthropic.completions.create(
-            model="claude-instant-1.1",
-            max_tokens_to_sample=300,
-            prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[\"")
+        successful = False
+        while not successful:
+            try:
+                completion = self.anthropic.completions.create(
+                    model="claude-instant-1.1",
+                    max_tokens_to_sample=300,
+                    prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[\"")
+                successful = True
+            except:
+                print("Anthropic error: Trying again...")
+                time.sleep(3)
         
         try:
             result_list = ast.literal_eval("[\""+completion.completion)
@@ -147,10 +154,17 @@ unsure_flag: a boolean (True/False) stating that the model is unsure whether the
 <unsure_flag>False</unsure_flag></result>
 </example_response>"""
 
-        completion = self.anthropic.completions.create(
-            model="claude-instant-1.1",
-            max_tokens_to_sample=10000,
-            prompt=f"{HUMAN_PROMPT}{fact_check_prompt}{AI_PROMPT}<result>")
+        successful = False
+        while not successful:
+            try:
+                completion = self.anthropic.completions.create(
+                    model="claude-instant-1.1",
+                    max_tokens_to_sample=10000,
+                    prompt=f"{HUMAN_PROMPT}{fact_check_prompt}{AI_PROMPT}<result>")
+                successful = True
+            except:
+                print("Anthropic error: Trying again...")
+                time.sleep(3)
 
         return "<result>"+completion.completion
 
