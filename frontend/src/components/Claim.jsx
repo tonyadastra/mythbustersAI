@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Typography, Avatar, CircularProgress, Tooltip } from '@mui/material';
 import { CandidateScoreTracker } from './Scoreboard';
-import { useTheme } from '@emotion/react';
 import { UserAvatar } from './Avatar';
 import { candidates } from '../data/candidates';
 
