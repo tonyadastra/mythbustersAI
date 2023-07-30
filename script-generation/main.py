@@ -44,12 +44,13 @@ class ParagraphInput(BaseModel):
 
 @app.post("/generate")
 async def generate(req: QuestionReq):
+    print("received question: ", req)
     client = init_client()
     response = generate_moderator_questions(client, req.question) 
     return response
 
 @app.post("/fact_check")
-def generate(input: ClaimInput):
+def fact_check(input: ClaimInput):
     claim = dict()
     claim["claim"]=input.claim
     claim["speaker"] = input.speaker
@@ -61,7 +62,7 @@ def generate(input: ClaimInput):
     return fact_checking_result
 
 @app.post("/extract_claims")
-def generate(input: ParagraphInput):
+def extract_claims(input: ParagraphInput):
     paragraph = dict()
     paragraph["paragraph"]=input.paragraph
     paragraph["speaker"] = input.speaker
