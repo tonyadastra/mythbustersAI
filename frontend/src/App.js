@@ -10,9 +10,12 @@ import api from "./api";
 import AudioPlayer from "./components/Player";
 import { debateScript } from "./data/debate-script";
 import DebateContext from "./contexts/DebateContext";
+// import sampleAudio from './assets/audio/output.mp3'
 
 function App() {
-  const {transcripts, setTranscripts, claims, setClaims} = React.useContext(DebateContext);
+  const sampleAudio = debateScript[0].audio;
+  const { transcripts, setTranscripts, claims, setClaims } =
+    React.useContext(DebateContext);
   // const [currentIndex, setCurrentIndex] = React.useState(-1);
   // const [transcripts, settranscripts] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -59,13 +62,18 @@ function App() {
       donald_trump_rebuttal,
     ].forEach(async (text, i) => {
       const role = i === 0 ? "elon" : i % 2 === 1 ? "biden" : "trump";
-      const res = await api.post("/text-to-speech", {
-        role: role,
-        transcript: text,
-        stream: false,
-      });
-      const { audio_bytes } = res;
-
+      // const res = await api.post("/text-to-speech", {
+      //   role: role,
+      //   transcript: text,
+      //   stream: false,
+      // });
+      // const { audio_bytes } = res;
+      console.log(
+        joe_biden_answer,
+        donald_trump_answer,
+        joe_biden_rebuttal,
+        donald_trump_rebuttal
+      )
 
       setTranscripts((transcripts) => {
         const newTranscripts = [...transcripts];
@@ -80,16 +88,13 @@ function App() {
           text,
           // category: "economy",
           question: elon_musk_question,
-          audio: audio_bytes,
+          audio: sampleAudio,
           nextIndex: i + 1,
-
         });
 
         return newTranscripts;
       });
-
     });
-
 
     setCurrentIndex(0);
     setInSession(true);
