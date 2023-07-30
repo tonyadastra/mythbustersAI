@@ -71,7 +71,7 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         all_results = google_results + wiki_results
 
         if len(all_results) == 0:
-            return {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
+            return {"score": 0.0, "reason": "No references found.", "references": [], "unsure_flag": True}
 
         # print("Time taken to gather references: ", time.time() - start_time)
 
@@ -101,7 +101,7 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         except:
             print("----------------------------------------------------")
             print("Error: ",result)
-            json_data = {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
+            json_data = {"score": 0.0, "reason": "No references found.", "references": [], "unsure_flag": True}
 
         return json_data
     
