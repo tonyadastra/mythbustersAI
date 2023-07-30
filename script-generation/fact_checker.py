@@ -71,7 +71,7 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         all_results = google_results + wiki_results
 
         if len(all_results) == 0:
-            return {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
+            return {"score": 0.0, "reason": "No references found.", "references": [], "unsure_flag": True}
 
         # print("Time taken to gather references: ", time.time() - start_time)
 
@@ -95,12 +95,13 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
             root = ET.fromstring(result)
             json_data = {}
             json_data['score'] = float(root.find('score').text.replace(" ",""))
-            json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
+            json_data['reason'] = root.find('reason').text
+            json_data['references'] = references_for_fact_checking
             json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
         except:
             print("----------------------------------------------------")
             print("Error: ",result)
-            json_data = {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
+            json_data = {"score": 0.0, "reason": "No references found.", "references": [], "unsure_flag": True}
 
         return json_data
     
