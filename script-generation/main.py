@@ -11,6 +11,9 @@ import requests
 import io
 from fact_checker import FactChecker
 import base64
+from fastapi.middleware.cors import CORSMiddleware
+
+from typing import Optional
 
 load_dotenv()
 
@@ -19,9 +22,13 @@ def init_client():
     return client
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware, allow_origins=['*'], allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 class QuestionReq(BaseModel):
-    question: str
+    question: Optional[str] = ""
 
 class ClaimInput(BaseModel):
     claim: str
@@ -54,13 +61,13 @@ def generate_moderator_questions(client, question):
         random_question = question
     else:
         print("Script called without args")
-        with open(r"C:\Users\anand\Desktop\vscode_projects\catchTheLiar-AI\script-generation/prompts/questions.txt") as f:
+        with open(r"./prompts/questions.txt") as f:
             questions = f.read().split('\n')
             questions = list(filter(None, questions)) 
             random_question = random.choice(questions)
             print(random_question)
 
-    with open(r"C:\Users\anand\Desktop\vscode_projects\catchTheLiar-AI\script-generation/prompts/flow.md") as f:
+    with open(r"./prompts/flow.md") as f:
         prompt = f.read()
         updated_prompt = prompt.replace("$question", random_question)
     
