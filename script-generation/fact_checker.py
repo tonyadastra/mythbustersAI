@@ -53,14 +53,25 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         time2 = time.time()
 
         # Search the web
-        wiki_results = self.getWikiContent(wikipedia_queries)
+        if len(wikipedia_queries) > 0:
+            wiki_results = self.getWikiContent(wikipedia_queries)
+        else:
+            wiki_results = []
+
         # print("get wiki content: ", time.time() - time2)
         time2 = time.time()
-        google_results = self.googleSearch(google_search_queries)
+        if len(google_search_queries) > 0:
+            google_results = self.googleSearch(google_search_queries)
+        else:
+            google_results = []
+
         # print("get google content: ", time.time() - time2)
         time2 = time.time()
 
         all_results = google_results + wiki_results
+
+        if len(all_results) == 0:
+            return {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
 
         # print("Time taken to gather references: ", time.time() - start_time)
 
@@ -82,7 +93,7 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
 
         root = ET.fromstring("<data>"+result+"</data>")
         json_data = {}
-        json_data['score'] = float(root.find('score').text)
+        json_data['score'] = float(root.find('score').text.replace(" ",""))
         json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
         json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
 
@@ -93,9 +104,13 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         completion = self.anthropic.completions.create(
             model="claude-instant-1.1",
             max_tokens_to_sample=300,
-            prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[")
+            prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[\"")
         
-        result_list = ast.literal_eval("["+completion.completion)
+        try:
+            result_list = ast.literal_eval("[\""+completion.completion)
+        except:
+            result_list = []
+        
         return result_list
 
     def anthropicFactCheck(self, claim, knowledge_base):
