@@ -68,17 +68,18 @@ def generate(input: ParagraphInput):
     
 def generate_moderator_questions(client, question):
 
-    if question == "":
-        print("Script called with args")
-        print(sys.argv)
+    if question != "":
+        print("Input question is empty")
         random_question = question
+
     else:
         print("Script called without args")
         with open(r"C:\Users\anand\Desktop\vscode_projects\catchTheLiar-AI\script-generation/prompts/questions.txt") as f:
             questions = f.read().split('\n')
             questions = list(filter(None, questions)) 
             random_question = random.choice(questions)
-            print(random_question)
+    
+    print(random_question)
 
     with open(r"C:\Users\anand\Desktop\vscode_projects\catchTheLiar-AI\script-generation/prompts/flow.md") as f:
         prompt = f.read()
