@@ -38,3 +38,5 @@ wikipedia
 google-api-python-client
 html2text
 tqdm
+fastapi
+uvicorn
