@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import DebateContext from '../contexts/DebateContext';
 import api from '../api';
 // import audio from '../assets/audio/output.mp3';
-function AudioPlayer({ audio, nextIndex, setCurrentIndex, }) {
+function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
     const { transcripts, setTranscripts, claims, setClaims } = useContext(DebateContext); // [question, setQuestion
     const [isPlaying, setIsPlaying] = useState(true);
     const audioRef = useRef(null);
@@ -74,10 +74,11 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, }) {
         setIsPlaying(!isPlaying);
     };
 
-    if (!audio) return null;
+    if (!audio && !audioPath) return null;
     return (
         <div>
-            <audio ref={audioRef} src={'data:audio/mpeg;base64,' + audio} autoPlay />
+            <audio ref={audioRef} src={
+                audioPath ? audioPath : 'data:audio/mpeg;base64,' + audio} autoPlay />
             {/* <source src={'data:audio/mpeg;base64,' + audio} />
             </audio> */}
             <button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>

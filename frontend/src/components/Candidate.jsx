@@ -40,6 +40,7 @@ export const DebateCandidate = ({ id, transcript, currentTranscripts, onClick, s
                     currentTranscripts={currentTranscripts}
                     onFinish={transcript.onFinish}
                     nextIndex={transcript.nextIndex}
+                    audioPath={transcript.audioPath}
                 />
             }
         </Box>

@@ -108,7 +108,9 @@ function App() {
   const start = async () => {
     setInSession(true);
     setCurrentIndex(0);
-    // const res = await api.post("/start");
+    setTranscripts(debateScript);
+
+    
   };
 
   // React.useEffect(() => {
@@ -174,9 +176,7 @@ function App() {
               ? transcripts[currentIndex]
               : null
           }
-          onStart={() => {
-            setInSession(true);
-          }}
+          onStart={start}
           onPause={() => {
             setInSession(false);
           }}

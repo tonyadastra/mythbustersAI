@@ -35,7 +35,8 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                         (<AudioPlayer
                             nextIndex={transcript.nextIndex}
                             setCurrentIndex={setCurrentIndex}
-                            audio={transcript.audio} onFinish={transcript.onFinish} />)}
+                            audio={transcript.audio} onFinish={transcript.onFinish}
+                            audioPath={transcript.audioPath} />)}
                 </div>
             </Box>
             <br />

@@ -6,7 +6,6 @@ import { candidates } from '../data/candidates';
 
 export default function Claim({ claim, idx }) {
     const [toggleReason, setToggleReason] = React.useState(false);
-    // console.log(claim, claim.speaker_id);
     const { image } = candidates[claim.speaker_id];
     const isLeft = claim.id === 'candidate-1';
     const bgColor = getBgColor(claim);
@@ -40,8 +39,6 @@ export default function Claim({ claim, idx }) {
                     <Typography sx={{
                         ...(isLeft ? { textAlign: 'left' } : { textAlign: 'right' })
                     }} variant="body2"> {claim.claim}
-
-
                         {toggleReason && claim.reason &&
                             (
                                 <>
