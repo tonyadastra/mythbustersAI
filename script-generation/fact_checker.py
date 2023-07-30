@@ -95,7 +95,8 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
             root = ET.fromstring(result)
             json_data = {}
             json_data['score'] = float(root.find('score').text.replace(" ",""))
-            json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
+            json_data['reason'] = root.find('reason').text
+            json_data['references'] = references_for_fact_checking
             json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
         except:
             print("----------------------------------------------------")
