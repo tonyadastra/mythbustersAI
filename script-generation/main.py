@@ -10,6 +10,8 @@ from pydantic import BaseModel
 import requests
 import io
 from fact_checker import FactChecker
+import base64
+
 load_dotenv()
 
 def init_client():
@@ -88,15 +90,16 @@ def generate_moderator_questions(client, question):
 class TextToSpeechReq(BaseModel):
     role: str
     transcript: str
+    stream: bool
 
 @app.post("/text-to-speech")
 async def generate(req: TextToSpeechReq):
     apikey = os.getenv("xi-api-key")
 
-    response = generate_audio_stream(apikey, req.role, req.transcript) 
+    response = generate_audio_stream(apikey, req.role, req.transcript, req.stream)
     return response
 
-def generate_audio_stream(apikey, role, transcript):
+def generate_audio_stream(apikey, role, transcript, stream):
 
     if role == "elon":
         video_id = "Eb1wB6y1PjLQCBQagBaG"
@@ -108,7 +111,11 @@ def generate_audio_stream(apikey, role, transcript):
         video_id = "Eb1wB6y1PjLQCBQagBaG"
 
     CHUNK_SIZE = 1024
-    url = "https://api.elevenlabs.io/v1/text-to-speech/{video_id}/stream"
+
+    if stream:
+        url = "https://api.elevenlabs.io/v1/text-to-speech/{video_id}/stream"
+    else:
+        url = "https://api.elevenlabs.io/v1/text-to-speech/{video_id}"
     url = url.format(video_id=video_id)
 
     print(url)
@@ -130,16 +137,21 @@ def generate_audio_stream(apikey, role, transcript):
 
     response = requests.post(url, json=data, headers=headers, stream=True)
 
-     # Create a BytesIO object to store the response content in memory
     audio_stream = io.BytesIO()
 
     for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
         if chunk:
-            # Write the chunk to the BytesIO stream
             audio_stream.write(chunk)
 
-    # Rewind the stream to the start
     audio_stream.seek(0)
 
-    # Return the in-memory stream
-    return audio_stream
+    if stream:
+        return audio_stream
+    else:
+        audio_data_bytes = audio_stream.read()
+        audio_stream.close()
+        audio_data_base64 = base64.b64encode(audio_data_bytes).decode('utf-8')
+        audio_data_json = {
+            'audio_bytes': audio_data_base64
+        }
+        return json.dumps(audio_data_json)
