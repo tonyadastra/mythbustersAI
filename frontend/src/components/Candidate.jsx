@@ -18,7 +18,7 @@ import audio from '../assets/audio/output.mp3';
 // }));
 
 
-export const DebateCandidate = ({ id, transcript, onClick }) => {
+export const DebateCandidate = ({ id, transcript, currentTranscripts, onClick, setCurrentIndex }) => {
     const candidate = candidates[id];
     const speaking = !!transcript;
     const { name, party, image } = candidate;
@@ -36,7 +36,10 @@ export const DebateCandidate = ({ id, transcript, onClick }) => {
             {transcript &&
                 <AudioPlayer
                     audio={transcript.audio}
+                    setCurrentIndex={setCurrentIndex}
+                    currentTranscripts={currentTranscripts}
                     onFinish={transcript.onFinish}
+                    nextIndex={transcript.nextIndex}
                 />
             }
         </Box>

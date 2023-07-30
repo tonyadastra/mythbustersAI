@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 // import audio from '../assets/audio/output.mp3';
-function AudioPlayer({ audio, onFinish }) {
+function AudioPlayer({ audio, nextIndex, setCurrentIndex }) {
     const [isPlaying, setIsPlaying] = useState(true);
     const audioRef = useRef(null);
 
@@ -14,8 +14,10 @@ function AudioPlayer({ audio, onFinish }) {
         audioRef.current.onended = async function () {
             setIsPlaying(false);
             console.log('audio ended')
-            if (onFinish)
-                await onFinish();
+            // if (onFinish) {
+            //     await onFinish();
+            // }
+            setCurrentIndex(nextIndex);
         }
     }, [isPlaying]);
 

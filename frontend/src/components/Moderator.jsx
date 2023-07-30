@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import SendIcon from '@mui/icons-material/Send';
 import AudioPlayer from "./Player";
 
-export default function DebateModerator({ id, transcript, inSession, onStart, onPause, onAskQuestion, onClick }) {
+export default function DebateModerator({ id, transcript, inSession, onStart, onPause, onAskQuestion, onClick, setCurrentIndex }) {
     const moderator = moderators[id];
     const { name, image } = moderator;
     const [askQuestion, setAskQuestion] = useState(false); // [question, setQuestion
@@ -32,7 +32,10 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                     <h3>{name}</h3>
                     <p>Moderator</p>
                     {speaking &&
-                        (<AudioPlayer audio={transcript.audio} onFinish={transcript.onFinish} />)}
+                        (<AudioPlayer
+                            nextIndex={transcript.nextIndex}
+                            setCurrentIndex={setCurrentIndex}
+                            audio={transcript.audio} onFinish={transcript.onFinish} />)}
                 </div>
             </Box>
             <br />

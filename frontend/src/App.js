@@ -15,36 +15,11 @@ function App() {
   const [currentTranscripts, setCurrentTranscripts] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [claims, setClaims] = React.useState(sampleClaims);
-  const [inSession, setInSession] = React.useState(true);
+  const [inSession, setInSession] = React.useState(false);
 
   // const currentTranscript = React.useMemo(() => {
   //   return currentTranscripts[currentIndex];
   // }, [currentTranscripts, currentIndex]);
-
-  const onFinishPlaying = async (newIndex) => {
-    if (newIndex > currentTranscripts.length - 1 || !inSession) return;
-
-    if (newIndex < currentTranscripts.length - 1) {
-      console.log("set current index");
-      setCurrentIndex(newIndex);
-    } else {
-      setInSession(false);
-      console.log("end session");
-    }
-
-    // const res = await api.post("/extract_claims", {
-    //   paragraph: currentTranscripts[currentIndex].text,
-    //   speaker: currentTranscripts[currentIndex].name,
-    //   opponent:
-    //     currentTranscripts[currentIndex].name === "Donald Trump"
-    //       ? "Joe Biden"
-    //       : "Donald Trump",
-    //   moderator: "Elon Musk",
-    // });
-    // console.log(res);
-
-    // todo: run fact checker
-  };
 
   const askQuestion = async (question) => {
     setCurrentTranscripts([]);
@@ -94,8 +69,8 @@ function App() {
       elon_musk_question,
       joe_biden_answer,
       donald_trump_answer,
-      // joe_biden_rebuttal,
-      // donald_trump_rebuttal,
+      joe_biden_rebuttal,
+      donald_trump_rebuttal,
     ].forEach(async (text, i) => {
       const role = i === 0 ? "elon" : i % 2 === 1 ? "biden" : "trump";
       const res = await api.post("/text-to-speech", {
@@ -103,9 +78,8 @@ function App() {
         transcript: text,
         stream: false,
       });
-      const { audio_bytes } = JSON.parse(res);
+      const { audio_bytes } = res;
 
-      console.log(audio_bytes);
 
       setCurrentTranscripts((currentTranscripts) => {
         const newTranscripts = [...currentTranscripts];
@@ -121,17 +95,18 @@ function App() {
           // category: "economy",
           question: elon_musk_question,
           audio: audio_bytes,
-          onFinish: async () => {
-            await onFinishPlaying(i + 1);
-          },
+          nextIndex: i + 1,
+
         });
+
         return newTranscripts;
       });
-      if (i === 0) {
-        setCurrentIndex(0);
-        setInSession(true);
-      }
+
     });
+
+
+    setCurrentIndex(0);
+    setInSession(true);
     return res;
   };
 
@@ -171,6 +146,7 @@ function App() {
           <Grid item xs={4} alignItems="center">
             <DebateCandidate
               id="trump"
+              setCurrentIndex={setCurrentIndex}
               transcript={
                 currentTranscripts[currentIndex]?.role === "candidate-1"
                   ? currentTranscripts[currentIndex]
@@ -184,6 +160,7 @@ function App() {
           <Grid item xs={4} alignItems="center">
             <DebateCandidate
               id="biden"
+              setCurrentIndex={setCurrentIndex}
               transcript={
                 currentTranscripts[currentIndex]?.role === "candidate-2"
                   ? currentTranscripts[currentIndex]
@@ -200,6 +177,7 @@ function App() {
         <DebateModerator
           id="elon"
           inSession={inSession}
+          setCurrentIndex={setCurrentIndex}
           transcript={
             currentTranscripts[currentIndex]?.role === "moderator"
               ? currentTranscripts[currentIndex]

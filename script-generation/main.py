@@ -73,10 +73,10 @@ def generate(input: ParagraphInput):
     print(claims)
     return claims
     
-def generate_moderator_questions(client, question):
+def generate_moderator_questions(client, question = None):
 
-    if question != "":
-        print("Input question is empty")
+    if question:
+        print("Input question is not empty")
         random_question = question
 
     else:
@@ -164,6 +164,7 @@ def generate_audio_stream(apikey, role, transcript, stream):
     }
 
     response = requests.post(url, json=data, headers=headers, stream=True)
+    print(response.status_code)
 
     audio_stream = io.BytesIO()
 
