@@ -33,31 +33,37 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, }) {
                     ...c,
                     speaker_id: c.speaker === "Donald Trump" ? "trump" : "biden",
                     loading: true,
+                    id: c.speaker === "Donald Trump" ? "candidate-1" : "candidate-2",
                 }))
 
                 setClaims(
-                    newClaims
+                    (prev) => [...prev, ...newClaims]
                 );
                 console.log(newClaims);
 
 
                 newClaims.forEach(async (claim, idx) => {
-                    const { score, reason, unsure_flag } = await api.post('/fact_check', {
-                        claim: claim.claim,
-                        speaker: claim.speaker,
-                        opponent: claim.opponent,
-                        // moderator: claim.moderator,
-                    });
-                    console.log(score, reason, unsure_flag);
+                    try {
+                        const { score, reason, unsure_flag } = await api.post('/fact_check', {
+                            claim: claim.claim,
+                            speaker: claim.speaker,
+                            opponent: claim.opponent,
+                            // moderator: claim.moderator,
+                        });
+                        console.log(score, reason, unsure_flag);
 
-                    newClaims[idx].loading = false;
-                    newClaims[idx].score = score;
-                    newClaims[idx].reason = reason;
-                    newClaims[idx].unsure_flag = unsure_flag;
-                    newClaims[idx].speaker_id = claim.speaker_id;
+                        newClaims[idx].loading = false;
+                        newClaims[idx].score = score;
+                        newClaims[idx].reason = reason;
+                        newClaims[idx].unsure_flag = unsure_flag;
+                        newClaims[idx].speaker_id = claim.speaker_id;
+                        newClaims[idx].id = claim.id;
 
-                    console.log(newClaims)
-                    setClaims([...newClaims]);
+                        console.log(newClaims)
+                        setClaims((prev) => [...prev, ...newClaims]);
+                    } catch (e) {
+                        console.log(e);
+                    }
                 });
             }
         }

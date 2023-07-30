@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
+import DebateContext from '../contexts/DebateContext';
 
 
 /* 
@@ -29,7 +30,8 @@ const claims = [
   },
 ];
 */
-export function CandidateScoreTracker({ claims }) {
+export function CandidateScoreTracker() {
+    const { claims } = React.useContext(DebateContext);
     console.log(claims.filter(claim => claim.id === 'candidate-1' && claim.score > 0).length)
     const [candidate1Score, setCandidate1Score] = useState({
         truths: claims.filter(claim => claim.id === 'candidate-1' && claim.score > 0).reduce((acc, claim) => acc + claim.score, 0),
@@ -40,6 +42,11 @@ export function CandidateScoreTracker({ claims }) {
         truths: claims.filter(claim => claim.id === 'candidate-2' && claim.score > 0).reduce((acc, claim) => acc + claim.score, 0),
         lies: claims.filter(claim => claim.id === 'candidate-2' && claim.score < 0).reduce((acc, claim) => acc + Math.abs(claim.score), 0)
     });
+
+    React.useEffect(() => {
+        setCandidate1Score({ truths: claims.filter(claim => claim.id === 'candidate-1' && claim.score > 0).reduce((acc, claim) => acc + claim.score, 0), lies: claims.filter(claim => claim.id === 'candidate-1' && claim.score < 0).reduce((acc, claim) => acc + Math.abs(claim.score), 0) });
+        setCandidate2Score({ truths: claims.filter(claim => claim.id === 'candidate-2' && claim.score > 0).reduce((acc, claim) => acc + claim.score, 0), lies: claims.filter(claim => claim.id === 'candidate-2' && claim.score < 0).reduce((acc, claim) => acc + Math.abs(claim.score), 0) });
+    }, [claims]);
 
     return (
         <Box sx={{ display: 'flex' }}>
