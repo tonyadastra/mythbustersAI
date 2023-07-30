@@ -10,6 +10,7 @@ from pydantic import BaseModel
 import requests
 import io
 from fact_checker import FactChecker
+from claim_extractor import ClaimExtractor
 import base64
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,6 +36,12 @@ class ClaimInput(BaseModel):
     speaker: str
     opponent: str
 
+class ParagraphInput(BaseModel):
+    paragraph: str
+    speaker: str
+    opponent: str
+    moderator: str
+
 @app.post("/generate")
 async def generate(req: QuestionReq):
     client = init_client()
@@ -52,20 +59,34 @@ def generate(input: ClaimInput):
     fact_checking_result = truthGPT.factCheck(claim)
     print(fact_checking_result)
     return fact_checking_result
+
+@app.post("/extract_claims")
+def generate(input: ParagraphInput):
+    paragraph = dict()
+    paragraph["paragraph"]=input.paragraph
+    paragraph["speaker"] = input.speaker
+    paragraph["opponent"] = input.opponent
+    paragraph["moderator"] = input.moderator
+
+    extractor = ClaimExtractor()
+    claims = extractor.extractClaims(paragraph)
+    print(claims)
+    return claims
     
 def generate_moderator_questions(client, question):
 
-    if question == "":
-        print("Script called with args")
-        print(sys.argv)
+    if question != "":
+        print("Input question is empty")
         random_question = question
+
     else:
         print("Script called without args")
         with open(r"./prompts/questions.txt") as f:
             questions = f.read().split('\n')
             questions = list(filter(None, questions)) 
             random_question = random.choice(questions)
-            print(random_question)
+    
+    print(random_question)
 
     with open(r"./prompts/flow.md") as f:
         prompt = f.read()
@@ -161,4 +182,4 @@ def generate_audio_stream(apikey, role, transcript, stream):
         audio_data_json = {
             'audio_bytes': audio_data_base64
         }
-        return json.dumps(audio_data_json)
+        return audio_data_json

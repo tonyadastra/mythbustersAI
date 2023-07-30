@@ -41,48 +41,66 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
 <example_response>["Flora of France","Geography of Italy","Climate of France"]</example_response>"""
 
         start_time = time.time()
-        print("Starting..")
+        # print("Starting..")
 
         # Get list of queries
         time2 = time.time()
         wikipedia_queries = self.anthropicGetList(wikipedia_prompt)
-        print("Time wiki queries: ", time.time() - time2)
+        # print("Time wiki queries: ", time.time() - time2)
         time2 = time.time()
         google_search_queries = self.anthropicGetList(google_search_prompt)
-        print("Time google queries: ", time.time() - time2)
+        # print("Time google queries: ", time.time() - time2)
         time2 = time.time()
 
         # Search the web
-        wiki_results = self.getWikiContent(wikipedia_queries)
-        print("get wiki content: ", time.time() - time2)
+        if len(wikipedia_queries) > 0:
+            wiki_results = self.getWikiContent(wikipedia_queries)
+        else:
+            wiki_results = []
+
+        # print("get wiki content: ", time.time() - time2)
         time2 = time.time()
-        google_results = self.googleSearch(google_search_queries)
-        print("get google content: ", time.time() - time2)
+        if len(google_search_queries) > 0:
+            google_results = self.googleSearch(google_search_queries)
+        else:
+            google_results = []
+
+        # print("get google content: ", time.time() - time2)
         time2 = time.time()
 
         all_results = google_results + wiki_results
 
-        print("Time taken to gather references: ", time.time() - start_time)
+        if len(all_results) == 0:
+            return {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
 
-        print(len(all_results))
+        # print("Time taken to gather references: ", time.time() - start_time)
 
+        # print(len(all_results))
+
+        references_for_fact_checking = []
         for result in all_results:
-            print(result["url"])
-            print("----------------------------------------------------")
+            references_for_fact_checking.append(result["url"])
+            # print(result["url"])
+            # print("----------------------------------------------------")
 
-        print("Fact-checking...")
+        # print("Fact-checking...")
         time2 = time.time()
         result = self.anthropicFactCheck(claim, all_results)
-        print("fact-check: ", time.time() - time2)
+        # print("fact-check: ", time.time() - time2)
 
-        print(result)
+        # print(result)
         print("Time taken to gather references + let claude fact-check it: ", time.time() - start_time)
 
-        root = ET.fromstring("<data>"+result+"</data>")
-        json_data = {}
-        json_data['score'] = float(root.find('score').text)
-        json_data['reason'] = root.find('reason').text
-        json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
+        try:
+            root = ET.fromstring(result)
+            json_data = {}
+            json_data['score'] = float(root.find('score').text.replace(" ",""))
+            json_data['reason'] = root.find('reason').text + "\n References: " + str(references_for_fact_checking)
+            json_data['unsure_flag'] = json.loads(root.find('unsure_flag').text.lower())
+        except:
+            print("----------------------------------------------------")
+            print("Error: ",result)
+            json_data = {"score": 0.0, "reason": "No references found.", "unsure_flag": True}
 
         return json_data
     
@@ -91,9 +109,15 @@ this is a claim made by """+ claim["speaker"] +""" in a debate against """+ clai
         completion = self.anthropic.completions.create(
             model="claude-instant-1.1",
             max_tokens_to_sample=300,
-            prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[")
+            prompt=f"{HUMAN_PROMPT}{prompt}{AI_PROMPT}[\"")
         
-        result_list = ast.literal_eval("["+completion.completion)
+        try:
+            result_list = ast.literal_eval("[\""+completion.completion)
+        except:
+            print("----------------------------------------------------")
+            print("Error: ", completion.completion)
+            result_list = []
+        
         return result_list
 
     def anthropicFactCheck(self, claim, knowledge_base):
@@ -118,17 +142,17 @@ unsure_flag: a boolean (True/False) stating that the model is unsure whether the
 </response_information>
 
 <example_response>
-<score>1</score>
+<result><score>1</score>
 <reason>The claim is true, as according to cnn.com and nytimes.com, the claim was stated by the opponent in 2004.</reason>
-<unsure_flag>False</unsure_flag>
+<unsure_flag>False</unsure_flag></result>
 </example_response>"""
 
         completion = self.anthropic.completions.create(
             model="claude-instant-1.1",
-            max_tokens_to_sample=1000,
-            prompt=f"{HUMAN_PROMPT}{fact_check_prompt}{AI_PROMPT}<score>")
+            max_tokens_to_sample=10000,
+            prompt=f"{HUMAN_PROMPT}{fact_check_prompt}{AI_PROMPT}<result>")
 
-        return "<score>"+completion.completion
+        return "<result>"+completion.completion
 
     def getWikiContent(self, queries, max_sources=1):
         def fetch_sources(query, max_sources):
