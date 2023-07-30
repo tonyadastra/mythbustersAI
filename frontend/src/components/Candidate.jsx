@@ -7,6 +7,8 @@ import { UserAvatar } from "./Avatar";
 import AudioPlayer from "./Player";
 
 import audio from '../assets/audio/output.mp3';
+
+
 // const useStyles = styled()((theme) => ({
 //     avatarActive: {
 //         //   backgroundColor: theme.palette.grey[50],
@@ -16,9 +18,9 @@ import audio from '../assets/audio/output.mp3';
 // }));
 
 
-export const DebateCandidate = ({ id, speaking, onClick }) => {
-    const theme = useTheme();
+export const DebateCandidate = ({ id, transcript, onClick }) => {
     const candidate = candidates[id];
+    const speaking = !!transcript;
     const { name, party, image } = candidate;
 
     return (
@@ -31,7 +33,12 @@ export const DebateCandidate = ({ id, speaking, onClick }) => {
                 <p>{party}</p>
             </div>
 
-            <AudioPlayer audio={speaking ? audio : null} />
+            {transcript &&
+                <AudioPlayer
+                    audio={transcript.audio}
+                    onFinish={transcript.onFinish}
+                />
+            }
         </Box>
     );
 }

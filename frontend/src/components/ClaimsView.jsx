@@ -9,9 +9,6 @@ import Claim from './Claim';
 
 
 export const Claims = ({ claims }) => {
-
-  // search candidates by name
-  // claims = claims.reverse();
   const reversedClaims = claims.slice().reverse();
 
   return (
@@ -35,11 +32,3 @@ export const Claims = ({ claims }) => {
     </Box>
   );
 };
-
-function getBgColor(claim) {
-  if (claim.loading) return 'grey.300';
-  if (claim.score < 0) return 'error.light';
-  if (claim.score === 0) return 'warning.main';
-  if (claim.score > 0 && claim.score < 1) return 'warning.light';
-  return 'success.light';
-}

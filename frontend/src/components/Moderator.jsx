@@ -1,14 +1,17 @@
-import { Avatar, Box, Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Avatar, Box, Button, IconButton, InputAdornment, TextField, CircularProgress } from "@mui/material";
 import { moderators } from "../data/moderators";
 import { UserAvatar } from "./Avatar";
 import React, { useState } from "react";
 import SendIcon from '@mui/icons-material/Send';
+import AudioPlayer from "./Player";
 
-export default function DebateModerator({ id, speaking, inSession, onStart, onPause, onAskQuestion, onClick }) {
+export default function DebateModerator({ id, transcript, inSession, onStart, onPause, onAskQuestion, onClick }) {
     const moderator = moderators[id];
     const { name, image } = moderator;
     const [askQuestion, setAskQuestion] = useState(false); // [question, setQuestion
     const [question, setQuestion] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const speaking = !!transcript;
 
     React.useEffect(() => {
         // if user hits cancel key, reset question
@@ -28,6 +31,8 @@ export default function DebateModerator({ id, speaking, inSession, onStart, onPa
                 <div className="moderator-info">
                     <h3>{name}</h3>
                     <p>Moderator</p>
+                    {speaking &&
+                        (<AudioPlayer audio={transcript.audio} onFinish={transcript.onFinish} />)}
                 </div>
             </Box>
             <br />
@@ -49,7 +54,9 @@ export default function DebateModerator({ id, speaking, inSession, onStart, onPa
                 </>
 
                 {!askQuestion ? (
-                    <Button variant="contained" color="info" onClick={() => { setAskQuestion(true) }}>
+                    <Button variant="contained" color="info" onClick={() => {
+                        setAskQuestion(true);
+                    }}>
                         Ask Question
                     </Button>
                 ) : (
@@ -60,7 +67,19 @@ export default function DebateModerator({ id, speaking, inSession, onStart, onPa
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton>
-                                            <SendIcon onClick={() => { onAskQuestion(question) }} />
+                                            {loading
+                                                ? <CircularProgress size={15} />
+                                                : <SendIcon onClick={async () => {
+                                                    setLoading(true);
+                                                    try {
+                                                        const res = await onAskQuestion(question);
+                                                    } catch (e) {
+                                                        console.log(e);
+                                                    }
+                                                    finally {
+                                                        setLoading(false);
+                                                    }
+                                                }} />}
                                         </IconButton>
                                     </InputAdornment>
                                 ),

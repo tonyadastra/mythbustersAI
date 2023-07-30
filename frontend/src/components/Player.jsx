@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 // import audio from '../assets/audio/output.mp3';
-function AudioPlayer({ audio }) {
-    const [isPlaying, setIsPlaying] = useState(false);
+function AudioPlayer({ audio, onFinish }) {
+    const [isPlaying, setIsPlaying] = useState(true);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -11,7 +11,14 @@ function AudioPlayer({ audio }) {
         } else {
             audioRef.current.pause();
         }
+        audioRef.current.onended = async function () {
+            setIsPlaying(false);
+            console.log('audio ended')
+            if (onFinish)
+                await onFinish();
+        }
     }, [isPlaying]);
+
 
     const togglePlay = () => {
         setIsPlaying(!isPlaying);
@@ -20,7 +27,9 @@ function AudioPlayer({ audio }) {
     if (!audio) return null;
     return (
         <div>
-            <audio ref={audioRef} src={audio} />
+            <audio ref={audioRef} src={'data:audio/mpeg;base64,' + audio} autoPlay />
+            {/* <source src={'data:audio/mpeg;base64,' + audio} />
+            </audio> */}
             <button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
         </div>
     );
