@@ -56,11 +56,23 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
                         newClaims[idx].score = score;
                         newClaims[idx].reason = reason;
                         newClaims[idx].unsure_flag = unsure_flag;
-                        newClaims[idx].speaker_id = claim.speaker_id;
+                        newClaims[idx].speaker_id = claim.speaker === "Donald Trump" ? "trump" : "biden";
                         newClaims[idx].id = claim.id;
+                        newClaims[idx].references = claim.references;
 
-                        console.log(newClaims)
-                        setClaims((prev) => [...prev, ...newClaims]);
+                        // console.log(newClaims)
+
+                        // const updatedClaims = [...claims, ...newClaims];
+                        
+                        // // filter out duplicates
+                        // const uniqueClaims = updatedClaims.filter((claim, idx, self) =>
+                        //     idx === self.findIndex((c) => (
+                        //         c.claim === claim.claim && c.speaker === claim.speaker
+                        //     ))
+                        // );
+                        setClaims((prev) => [...prev.filter(c => c.claim !== claim.claim), ...newClaims]);
+
+                        // setClaims((prev) => [...prev, ...newClaims]);
                     } catch (e) {
                         console.log(e);
                     }

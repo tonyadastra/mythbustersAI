@@ -96,6 +96,7 @@ def generate_moderator_questions(client, question = None):
     
     resp = client.completions.create(
         model="claude-instant-1",
+        # model="claude-2",
         prompt=f"""\n\nHuman: {updated_prompt}
         \n\nAssistant: Here is the response in XML format:\n\n""",
         max_tokens_to_sample=1000,

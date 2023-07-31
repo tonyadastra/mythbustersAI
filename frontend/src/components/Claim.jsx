@@ -6,7 +6,8 @@ import { candidates } from '../data/candidates';
 
 export default function Claim({ claim, idx }) {
     const [toggleReason, setToggleReason] = React.useState(false);
-    const { image } = candidates[claim.speaker_id];
+    
+    const image = claim.speaker === "Donald Trump" ? candidates.trump.image : candidates.biden.image;
     const isLeft = claim.id === 'candidate-1';
     const bgColor = getBgColor(claim);
 
@@ -46,6 +47,14 @@ export default function Claim({ claim, idx }) {
                                     <Typography variant='caption'>
                                         {claim.reason}
                                     </Typography>
+
+                                    {claim.references && claim.references.map((ref, idx) => {
+                                        return (
+                                            <Typography variant='caption'>
+                                                <a href={ref} target="_blank">{ref}</a>
+                                            </Typography>
+                                        )
+                                    })}
                                 </>
                             )
                         }
@@ -67,8 +76,6 @@ export default function Claim({ claim, idx }) {
                 ) : null}
 
             </Box>
-
-
         </Box>
 
     );
@@ -76,9 +83,9 @@ export default function Claim({ claim, idx }) {
 }
 
 function getBgColor(claim) {
-    if (claim.loading) return 'grey.300';
+    if (claim.loading || claim?.unsure_flag) return 'grey.700';
     if (claim.score < 0) return 'error.light';
     if (claim.score === 0) return 'warning.main';
-    if (claim.score > 0 && claim.score < 1) return 'warning.light';
+    if (claim.score > 0 && claim.score <= .5) return 'warning.light';
     return 'success.light';
 }

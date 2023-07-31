@@ -13,7 +13,7 @@ import DebateContext from "./contexts/DebateContext";
 // import sampleAudio from './assets/audio/output.mp3'
 
 function App() {
-  const sampleAudio = debateScript[0].audio;
+
   const { transcripts, setTranscripts, claims, setClaims } =
     React.useContext(DebateContext);
   // const [currentIndex, setCurrentIndex] = React.useState(-1);
@@ -62,18 +62,18 @@ function App() {
       donald_trump_rebuttal,
     ].forEach(async (text, i) => {
       const role = i === 0 ? "elon" : i % 2 === 1 ? "biden" : "trump";
-      // const res = await api.post("/text-to-speech", {
-      //   role: role,
-      //   transcript: text,
-      //   stream: false,
-      // });
-      // const { audio_bytes } = res;
+      const res = await api.post("/text-to-speech", {
+        role: role,
+        transcript: text,
+        stream: false,
+      });
+      const { audio_bytes } = res;
       console.log(
         joe_biden_answer,
         donald_trump_answer,
         joe_biden_rebuttal,
         donald_trump_rebuttal
-      )
+      );
 
       setTranscripts((transcripts) => {
         const newTranscripts = [...transcripts];
@@ -88,7 +88,7 @@ function App() {
           text,
           // category: "economy",
           question: elon_musk_question,
-          audio: sampleAudio,
+          audio: audio_bytes,
           nextIndex: i + 1,
         });
 
@@ -109,8 +109,6 @@ function App() {
     setInSession(true);
     setCurrentIndex(0);
     setTranscripts(debateScript);
-
-    
   };
 
   // React.useEffect(() => {
@@ -123,11 +121,17 @@ function App() {
   // }, [currentIndex, transcripts, inSession]);
 
   return (
-    <>
+    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh', color: 'text.primary' }}>
       <div className="App">
         <Typography variant="h3" component="h3" gutterBottom>
           Live 2024 Presidential Debate
         </Typography>
+
+        <Typography gutterBottom>
+          Live fact-checking presidential debates, powered by Claude.
+        </Typography>
+
+        <br />
 
         {/* <CandidateScoreTracker /> */}
 
@@ -183,7 +187,7 @@ function App() {
           onAskQuestion={askQuestion}
         />
       </Box>
-    </>
+    </Box>
   );
 }
 

@@ -30,6 +30,15 @@ const claims = [
   },
 ];
 */
+
+const boxStyles = {
+    border: '1px solid',
+    borderColor: 'grey.500',
+    borderRadius: 2,
+    p: .5,
+    mb: 1
+};
+
 export function CandidateScoreTracker() {
     const { claims } = React.useContext(DebateContext);
     console.log(claims.filter(claim => claim.id === 'candidate-1' && claim.score > 0).length)
@@ -49,7 +58,7 @@ export function CandidateScoreTracker() {
     }, [claims]);
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ ...boxStyles, display: 'flex' }}>
             <Box sx={{ flex: 1, p: 2 }}>
                 <Typography variant="h4">{(candidate1Score.truths - candidate1Score.lies).toFixed(1)}</Typography>
                 <Box sx={{ display: 'flex' }}>
@@ -58,7 +67,7 @@ export function CandidateScoreTracker() {
                         <Typography color="primary">Truths</Typography>
                     </Box>
                     <Box sx={{ flex: 1, p: 1 }}>
-                        <Typography variant="body1">{candidate1Score.lies}</Typography>
+                        <Typography variant="body1">{candidate1Score.lies.toFixed(1)}</Typography>
                         <Typography color="error">Lies</Typography>
                     </Box>
                 </Box>

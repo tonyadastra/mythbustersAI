@@ -9,6 +9,7 @@ import { DebateContextProvider } from "./contexts/DebateContext";
 
 const theme = createTheme({
   palette: {
+    mode: "dark",
     primary: {
       main: blue[500],
     },
