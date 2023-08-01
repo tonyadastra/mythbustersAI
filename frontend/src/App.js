@@ -187,6 +187,7 @@ function App() {
           onAskQuestion={askQuestion}
         />
       </Box>
+      <br />
     </Box>
   );
 }

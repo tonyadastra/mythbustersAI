@@ -2,7 +2,7 @@ import axios from "axios";
 
 // const backendURL = "http://127.0.0.1:8000";
 const axiosClient = axios.create({
-  // baseURL: backendURL,
+  baseURL: "/api/",
 });
 
 const api = {
