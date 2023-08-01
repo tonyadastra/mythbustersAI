@@ -1,10 +1,9 @@
-import { Avatar, Box, Button, Autocomplete, IconButton, InputAdornment, TextField, CircularProgress } from "@mui/material";
+import { Avatar, Box, Button, IconButton, InputAdornment, TextField, CircularProgress } from "@mui/material";
 import { moderators } from "../data/moderators";
 import { UserAvatar } from "./Avatar";
 import React, { useState } from "react";
 import SendIcon from '@mui/icons-material/Send';
 import AudioPlayer from "./Player";
-import { debateQuestions } from '../data/questions';
 
 export default function DebateModerator({ id, transcript, inSession, onStart, onPause, onAskQuestion, onClick, setCurrentIndex }) {
     const moderator = moderators[id];
@@ -66,37 +65,32 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                     </Button>
                 ) : (
 
-                    <div className="ask-question" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <Autocomplete
-                            disablePortal
-                            id="question-box"
-                            options={debateQuestions}
-                            onChange={(e) => { setQuestion(e.target.value) }}
-                            sx={{ width: 300 }}
-                            onKeyUp={(e) => {
-                                if (e.key === "Enter") {
-                                    setLoading(true);
-                                    try {
-                                        const res = onAskQuestion(question);
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
-                                    finally {
-                                        setLoading(false);
-                                    }
-                                }
+                    <div className="ask-question">
+                        <TextField id="outlined-basic" label="Question" variant="outlined" onChange={(e) => { setQuestion(e.target.value) }}
+                            style={{ width: '400px' }}
+                            InputProps={{
+
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton>
+                                            {loading
+                                                ? <CircularProgress size={15} />
+                                                : <SendIcon onClick={async () => {
+                                                    setLoading(true);
+                                                    try {
+                                                        const res = await onAskQuestion(question);
+                                                    } catch (e) {
+                                                        console.log(e);
+                                                    }
+                                                    finally {
+                                                        setLoading(false);
+                                                    }
+                                                }} />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
                             }}
-
-                            renderInput={(params) => <TextField
-                                {...params}
-                                id="outlined-basic" label="Question" variant="outlined"
-                                style={{ width: '400px' }}
-                                {...(loading && { disabled: true })}
-                            />}
-
                         />
-
-                        {loading && <CircularProgress size={15} />}
 
                     </div>
                 )}
