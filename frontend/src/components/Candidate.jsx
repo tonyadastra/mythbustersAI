@@ -25,7 +25,7 @@ export const DebateCandidate = ({ id, transcript, currentTranscripts, onClick, s
 
     return (
         <Box className="candidate" onClick={onClick} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <UserAvatar name={name} image={image} speaking={speaking} size={100} />
+            <UserAvatar name={name} image={image} speaking={speaking} size={90} />
             <img src={podiumSvg} alt="podium"
                 style={{ width: "100px", height: "100px", fill: '#fff', color: '#fff' }} />
             <div className="candidate-info">

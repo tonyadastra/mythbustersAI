@@ -33,7 +33,7 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
     return (
         <Box className="moderator" onClick={onClick} >
             <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", }} gap={3}>
-                <UserAvatar name={name} image={image} speaking={speaking} size={100} />
+                <UserAvatar name={name} image={image} speaking={speaking} size={90} />
                 <div className="moderator-info">
                     <h3>{name}</h3>
                     <p>Moderator</p>

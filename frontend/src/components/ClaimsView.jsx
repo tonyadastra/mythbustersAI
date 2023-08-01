@@ -28,8 +28,8 @@ export const Claims = ({ claims }) => {
 
       <Box sx={{
         display: 'flex', flexDirection: 'column', gap: .5,
-        minHeight: '40vh',
-        maxHeight: '40vh', overflowY: 'scroll', overflowX: 'hidden'
+        minHeight: '35vh',
+        maxHeight: '35vh', overflowY: 'scroll', overflowX: 'hidden'
       }}>
         {reversedClaims.map((claim, idx) => {
           return (
