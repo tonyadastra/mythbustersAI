@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from fastapi import APIRouter
 import anthropic
 import os
 import xml.etree.ElementTree as ET
@@ -9,10 +10,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
 import io
-from fact_checker import FactChecker
-from claim_extractor import ClaimExtractor
+from backend.fact_checker import FactChecker
+from backend.claim_extractor import ClaimExtractor
 import base64
-from fastapi.middleware.cors import CORSMiddleware
+
 
 from typing import Optional
 
@@ -24,11 +25,7 @@ def init_client():
 
 client = init_client()
 
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware, allow_origins=['*'], allow_methods=['*'],
-    allow_headers=['*'],
-)
+app = APIRouter()
 
 class QuestionReq(BaseModel):
     question: Optional[str] = ""

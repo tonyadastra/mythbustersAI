@@ -12,7 +12,6 @@ from functools import partial
 import time
 import re
 import json
-from fact_checker import FactChecker
 import anthropic
 
 load_dotenv()

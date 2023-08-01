@@ -34,7 +34,8 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
                     speaker_id: c.speaker === "Donald Trump" ? "trump" : "biden",
                     loading: true,
                     id: c.speaker === "Donald Trump" ? "candidate-1" : "candidate-2",
-                }))
+                }));
+                newClaims = newClaims.filter(c => !claims.some(p => p.claim === c.claim && p.speaker === c.speaker));
 
                 setClaims(
                     (prev) => [...prev, ...newClaims]
@@ -44,7 +45,7 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
 
                 newClaims.forEach(async (claim, idx) => {
                     try {
-                        const { score, reason, unsure_flag } = await api.post('/fact_check', {
+                        const { score, reason, unsure_flag, speaker, references } = await api.post('/fact_check', {
                             claim: claim.claim,
                             speaker: claim.speaker,
                             opponent: claim.opponent,
@@ -52,13 +53,13 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
                         });
                         console.log(score, reason, unsure_flag);
 
+                        newClaims[idx].id = claim.id;
                         newClaims[idx].loading = false;
                         newClaims[idx].score = score;
                         newClaims[idx].reason = reason;
                         newClaims[idx].unsure_flag = unsure_flag;
-                        newClaims[idx].speaker_id = claim.speaker === "Donald Trump" ? "trump" : "biden";
-                        newClaims[idx].id = claim.id;
-                        newClaims[idx].references = claim.references;
+                        newClaims[idx].speaker_id = speaker === "Donald Trump" ? "trump" : "biden";
+                        newClaims[idx].references = references;
 
                         // console.log(newClaims)
 

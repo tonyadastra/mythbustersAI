@@ -128,7 +128,7 @@ function App() {
         </Typography>
 
         <Typography gutterBottom>
-          Live fact-checking presidential debates, powered by Claude.
+          Live fact-checking - powered by Eleven Labs & Claude.
         </Typography>
 
         <br />

@@ -6,10 +6,11 @@ import { candidates } from '../data/candidates';
 
 export default function Claim({ claim, idx }) {
     const [toggleReason, setToggleReason] = React.useState(false);
-    
+
     const image = claim.speaker === "Donald Trump" ? candidates.trump.image : candidates.biden.image;
     const isLeft = claim.id === 'candidate-1';
     const bgColor = getBgColor(claim);
+    console.log(claim)
 
     return (
         <Box
@@ -47,14 +48,15 @@ export default function Claim({ claim, idx }) {
                                     <Typography variant='caption'>
                                         {claim.reason}
                                     </Typography>
-
-                                    {claim.references && claim.references.map((ref, idx) => {
-                                        return (
-                                            <Typography variant='caption'>
-                                                <a href={ref} target="_blank">{ref}</a>
-                                            </Typography>
-                                        )
-                                    })}
+                                    <div onClick={(e) => { e.stopPropagation() }}>
+                                        {claim.references && claim?.references.map((ref, idx) => {
+                                            return (
+                                                <Typography variant='caption'>
+                                                    <a href={ref} target="_blank">{ref}<br /></a>
+                                                </Typography>
+                                            )
+                                        })}
+                                    </div>
                                 </>
                             )
                         }
@@ -76,7 +78,7 @@ export default function Claim({ claim, idx }) {
                 ) : null}
 
             </Box>
-        </Box>
+        </Box >
 
     );
 
