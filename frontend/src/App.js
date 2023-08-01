@@ -14,13 +14,13 @@ import DebateContext from "./contexts/DebateContext";
 
 function App() {
 
-  const { transcripts, setTranscripts, claims, setClaims } =
+  const { transcripts, setTranscripts, claims, setClaims, inSession, setInSession } =
     React.useContext(DebateContext);
   // const [currentIndex, setCurrentIndex] = React.useState(-1);
   // const [transcripts, settranscripts] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   // const [claims, setClaims] = React.useState([]);
-  const [inSession, setInSession] = React.useState(false);
+  // const [inSession, setInSession] = React.useState(false);
 
   // const currentTranscript = React.useMemo(() => {
   //   return transcripts[currentIndex];

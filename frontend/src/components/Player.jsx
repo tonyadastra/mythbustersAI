@@ -3,12 +3,23 @@ import DebateContext from '../contexts/DebateContext';
 import api from '../api';
 // import audio from '../assets/audio/output.mp3';
 function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
-    const { transcripts, setTranscripts, claims, setClaims } = useContext(DebateContext); // [question, setQuestion
+    const { transcripts, setTranscripts, claims, setClaims, inSession, setInSession } = useContext(DebateContext); // [question, setQuestion
     const [isPlaying, setIsPlaying] = useState(true);
     const audioRef = useRef(null);
 
+    React.useEffect(() => {
+        if (!inSession) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+            return;
+        }
+        audioRef.current.play();
+        setIsPlaying(true);
+    }, [inSession]);
+
     useEffect(() => {
         if (!audioRef.current) return;
+        
         if (isPlaying) {
             audioRef.current.play();
         } else {
@@ -64,7 +75,7 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
                         // console.log(newClaims)
 
                         // const updatedClaims = [...claims, ...newClaims];
-                        
+
                         // // filter out duplicates
                         // const uniqueClaims = updatedClaims.filter((claim, idx, self) =>
                         //     idx === self.findIndex((c) => (
@@ -80,7 +91,7 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
                 });
             }
         }
-    }, [isPlaying]);
+    }, [isPlaying, inSession]);
 
 
     const togglePlay = () => {
