@@ -80,14 +80,14 @@ def generate_moderator_questions(client, question = None):
 
     else:
         print("Script called without args")
-        with open(r"./prompts/questions.txt") as f:
+        with open(r"./backend/prompts/questions.txt") as f:
             questions = f.read().split('\n')
             questions = list(filter(None, questions)) 
             random_question = random.choice(questions)
     
     print(random_question)
 
-    with open(r"./prompts/flow.md") as f:
+    with open(r"./backend/prompts/flow.md") as f:
         prompt = f.read()
         updated_prompt = prompt.replace("$question", random_question)
     

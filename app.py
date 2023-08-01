@@ -9,6 +9,8 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-app.mount("/", StaticFiles(directory="frontend/build", html = True), name="static")
 
-app.mount("/", backend_app)
+app.mount("/api", backend_app)
+app.mount("/", StaticFiles(directory="frontend/build", html=True), name="static")
+
+

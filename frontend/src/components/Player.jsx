@@ -22,14 +22,14 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
 
             const currentTranscript = transcripts[nextIndex - 1];
             if (currentTranscript && currentTranscript.role !== "moderator") {
-                const claims = await api.post('/extract_claims', {
+                const latest_claims = await api.post('/extract_claims', {
                     paragraph: currentTranscript.text,
                     speaker: currentTranscript.name,
                     opponent: currentTranscript.name === "Donald Trump" ? "Joe Biden" : "Donald Trump",
                     moderator: "Elon Musk"
                 });
 
-                let newClaims = claims.map(c => ({
+                let newClaims = latest_claims.map(c => ({
                     ...c,
                     speaker_id: c.speaker === "Donald Trump" ? "trump" : "biden",
                     loading: true,
