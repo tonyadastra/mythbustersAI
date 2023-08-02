@@ -3,7 +3,8 @@ AI to simulate political debates and fact-check them.
 
 🏆 Finalist at Anthropic Claude 2 AI Hackathon
 
-![Team Photo](https://github.com/tonyadastra/mythbustersAI/assets/67339555/e749cb08-e0db-499e-bb8b-7d30354406ff)
+<img src="https://github.com/tonyadastra/mythbustersAI/assets/67339555/e749cb08-e0db-499e-bb8b-7d30354406ff" width="500">
+
 <sub>July 30, 2023 @ Shack 15</sub>
 
 
@@ -17,5 +18,5 @@ AI to simulate political debates and fact-check them.
 
 
 Demo video
-<video src="https://github.com/tonyadastra/mythbustersAI/assets/67339555/5bf4adaf-e6ab-489d-9648-22e1f5316e4f" width="600">
 
+https://github.com/tonyadastra/mythbustersAI/assets/67339555/5bf4adaf-e6ab-489d-9648-22e1f5316e4f
