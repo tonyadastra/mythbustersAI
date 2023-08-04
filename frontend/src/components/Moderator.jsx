@@ -12,7 +12,7 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
     const { name, image } = moderator;
     const [askQuestion, setAskQuestion] = useState(false); // [question, setQuestion
     const [question, setQuestion] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const speaking = !!transcript;
 
     React.useEffect(() => {
@@ -63,7 +63,7 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                         )}
                 </>
 
-                {/* {!askQuestion ? (
+                {!askQuestion ? (
                     <Button variant="contained" color="info" onClick={() => {
                         setAskQuestion(true);
                     }}>
@@ -80,24 +80,6 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                             onChange={(index, obj) => {
                                 setQuestion(obj.value);
                             }}
-                            InputAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton onClick={() => {
-                                        setLoading(true);
-                                        try {
-                                            const res = onAskQuestion(question);
-                                        } catch (e) {
-                                            console.log(e);
-                                        }
-                                        finally {
-                                            setLoading(false);
-                                        }
-                                    }}>
-                                        <SendIcon />
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            
                             sx={{ width: 300 }}
                             onKeyUp={(e) => {
                                 if (e.key === "Enter") {
@@ -112,9 +94,32 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                                     }
                                 }
                             }}
-
                             renderInput={(params) => <TextField
                                 {...params}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    endAdornment: (
+                                        <InputAdornment position="end" style={{ marginRight: -5 }}>
+                                            <IconButton>
+                                                {!loading
+                                                    ? <SendIcon onClick={async () => {
+                                                        setLoading(true);
+                                                        try {
+                                                            const res = await onAskQuestion(question);
+                                                        } catch (e) {
+                                                            console.log(e);
+                                                        }
+                                                        finally {
+                                                            setLoading(false);
+                                                        }
+                                                    }} />
+                                                    : <CircularProgress size={20} />
+                                                }
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+
                                 id="outlined-basic" label="Question" variant="outlined"
                                 style={{ width: '400px' }}
                                 {...(loading && { disabled: true })}
@@ -122,10 +127,8 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
 
                         />
 
-                        
-
                     </div>
-                )} */}
+                )}
                 {/* <div className="moderator-tools">
                     <h3>Moderator Tools</h3>
                     <p>Fact Check</p>

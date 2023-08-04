@@ -128,15 +128,15 @@ async def generate(req: TextToSpeechReq):
     return response
 
 def generate_audio_stream(apikey, role, transcript, stream):
-
+    elon_video_id = "t7EoxTx22W0catHmnoak"
     if role == "elon":
-        video_id = "d9i4phvt82o4hQWminf4"
+        video_id = elon_video_id
     elif role == "biden":
-        video_id = "5UgdhXXU5Qq4vW5P6fHi"
+        video_id = "rw1hja2xibJD2qJzpBHJ"
     elif role == "trump":
-        video_id = "kTIOcW3fVj5kYgHbJrc2"
-    else :
-        video_id = "d9i4phvt82o4hQWminf4"
+        video_id = "aGHgh4gMY0lKysbmJkyc"
+    else:
+        video_id = elon_video_id
 
     CHUNK_SIZE = 1024
 

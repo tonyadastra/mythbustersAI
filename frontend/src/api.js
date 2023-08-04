@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendURL = "/api/";
+const backendURL = process.env.REACT_APP_BACKEND_URL || "/api/";
 const axiosClient = axios.create({
   baseURL: backendURL,
 });
