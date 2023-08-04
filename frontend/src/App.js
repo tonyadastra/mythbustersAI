@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { Box, Grid, ThemeProvider, Typography } from "@mui/material";
+import { Box, Grid, Hidden, ThemeProvider, Typography } from "@mui/material";
 import { DebateCandidate } from "./components/Candidate";
 import DebateModerator from "./components/Moderator";
 import React from "react";
@@ -13,9 +13,14 @@ import DebateContext from "./contexts/DebateContext";
 // import sampleAudio from './assets/audio/output.mp3'
 
 function App() {
-
-  const { transcripts, setTranscripts, claims, setClaims, inSession, setInSession } =
-    React.useContext(DebateContext);
+  const {
+    transcripts,
+    setTranscripts,
+    claims,
+    setClaims,
+    inSession,
+    setInSession,
+  } = React.useContext(DebateContext);
   // const [currentIndex, setCurrentIndex] = React.useState(-1);
   // const [transcripts, settranscripts] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -42,8 +47,8 @@ function App() {
 }
     */
 
-    setInSession(true);
-    setCurrentIndex(0);
+    // setInSession(true);
+    // setCurrentIndex(0);
 
     const {
       elon_musk_question,
@@ -74,28 +79,29 @@ function App() {
         joe_biden_rebuttal,
         donald_trump_rebuttal
       );
+      // make sure that it's in order of moderator, biden, trump, biden, trump
+
+      const new_transcript = {
+        role: role === "elon" ? "moderator" : "candidate-" + ((i % 2) + 1),
+        name:
+          role === "elon"
+            ? "Elon Musk"
+            : role === "biden"
+            ? "Joe Biden"
+            : "Donald Trump",
+        text,
+        // category: "economy",
+        question: elon_musk_question,
+        audio: audio_bytes,
+        nextIndex: i + 1,
+      };
 
       setTranscripts((transcripts) => {
         const newTranscripts = [...transcripts];
-        newTranscripts.push({
-          role: role === "elon" ? "moderator" : "candidate-" + ((i % 2) + 1),
-          name:
-            role === "elon"
-              ? "Elon Musk"
-              : role === "biden"
-              ? "Joe Biden"
-              : "Donald Trump",
-          text,
-          // category: "economy",
-          question: elon_musk_question,
-          audio: audio_bytes,
-          nextIndex: i + 1,
-        });
-
+        newTranscripts[i] = new_transcript;
         return newTranscripts;
       });
     });
-
     setCurrentIndex(0);
     setInSession(true);
     return res;
@@ -121,9 +127,15 @@ function App() {
   // }, [currentIndex, transcripts, inSession]);
 
   return (
-    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh', color: 'text.primary' }}>
+    <Box
+      sx={{
+        backgroundColor: "background.default",
+        minHeight: "100vh",
+        color: "text.primary",
+      }}
+    >
       <div className="App">
-        <Typography variant="h3" component="h3" gutterBottom>
+        <Typography variant="h4" component="h3" gutterBottom>
           Mythbusters AI - Live 2024 Presidential Debate
         </Typography>
 
@@ -140,7 +152,8 @@ function App() {
 
         <Grid container spacing={2}>
           {/* <Grid item xs={1} /> */}
-          <Grid item xs={4} alignItems="center">
+
+          <Grid item xs={6} md={4} alignItems="center">
             <DebateCandidate
               id="trump"
               setCurrentIndex={setCurrentIndex}
@@ -151,10 +164,12 @@ function App() {
               }
             />
           </Grid>
-          <Grid item xs={4}>
-            <Claims claims={claims} />
-          </Grid>
-          <Grid item xs={4} alignItems="center">
+          <Hidden only={["xs", "sm"]}>
+            <Grid item md={4}>
+              <Claims claims={claims} />
+            </Grid>
+          </Hidden>
+          <Grid item xs={6} md={4} alignItems="center">
             <DebateCandidate
               id="biden"
               setCurrentIndex={setCurrentIndex}
@@ -167,26 +182,37 @@ function App() {
           </Grid>
         </Grid>
         {/* <Grid item xs={1} /> */}
+        <br />
+        <Box>
+          <DebateModerator
+            id="elon"
+            inSession={inSession}
+            setCurrentIndex={setCurrentIndex}
+            transcript={
+              transcripts[currentIndex]?.role === "moderator"
+                ? transcripts[currentIndex]
+                : null
+            }
+            onStart={start}
+            onPause={() => {
+              setInSession(false);
+            }}
+            onAskQuestion={askQuestion}
+          />
+        </Box>
+
+        <Grid container spacing={2} alignItems="center">
+          <Grid
+            item
+            xs={12}
+            sx={{ display: { xs: "block", md: "none" } }}
+            alignItems="center"
+          >
+            <Claims claims={claims} />
+          </Grid>
+        </Grid>
       </div>
 
-      <br />
-      <Box>
-        <DebateModerator
-          id="elon"
-          inSession={inSession}
-          setCurrentIndex={setCurrentIndex}
-          transcript={
-            transcripts[currentIndex]?.role === "moderator"
-              ? transcripts[currentIndex]
-              : null
-          }
-          onStart={start}
-          onPause={() => {
-            setInSession(false);
-          }}
-          onAskQuestion={askQuestion}
-        />
-      </Box>
       <br />
     </Box>
   );
