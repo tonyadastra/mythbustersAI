@@ -21,7 +21,7 @@ export const Claims = ({ claims }) => {
 
   return (
     <Box sx={{
-      display: 'flex', flexDirection: 'column', marginTop: -5,
+      display: 'flex', flexDirection: 'column', marginTop: { xs: 3, md: -5 }
     }}>
 
       <CandidateScoreTracker claims={claims} />
@@ -31,11 +31,16 @@ export const Claims = ({ claims }) => {
         minHeight: '35vh',
         maxHeight: '35vh', overflowY: 'scroll', overflowX: 'hidden'
       }}>
-        {reversedClaims.map((claim, idx) => {
-          return (
-            <Claim claim={claim} />
-          )
-        })}
+        {!!reversedClaims?.length
+          ? reversedClaims.map((claim, idx) => {
+            return (
+              <Claim claim={claim} />
+            )
+          })
+          : <Typography sx={{ mt: 3 }} variant='body2'>
+            Claims will appear here as they are made by the candidate.
+          </Typography>
+        }
       </Box>
     </Box>
   );
