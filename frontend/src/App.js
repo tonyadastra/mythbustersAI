@@ -124,7 +124,7 @@ function App() {
     <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh', color: 'text.primary' }}>
       <div className="App">
         <Typography variant="h3" component="h3" gutterBottom>
-          Live 2024 Presidential Debate
+          Mythbusters AI - Live 2024 Presidential Debate
         </Typography>
 
         <Typography gutterBottom>
