@@ -76,16 +76,16 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                             disablePortal
                             id="question-box"
                             freeSolo
+                            disableClearable
                             options={debateQuestions}
                             onChange={(index, obj) => {
                                 setQuestion(obj.value);
                             }}
-                            sx={{ width: 300 }}
-                            onKeyUp={(e) => {
+                            onKeyUp={async (e) => {
                                 if (e.key === "Enter") {
                                     setLoading(true);
                                     try {
-                                        const res = onAskQuestion(question);
+                                        const res = await onAskQuestion(question);
                                     } catch (e) {
                                         console.log(e);
                                     }
@@ -121,7 +121,7 @@ export default function DebateModerator({ id, transcript, inSession, onStart, on
                                 }}
 
                                 id="outlined-basic" label="Question" variant="outlined"
-                                style={{ width: '400px' }}
+                                style={{ width: '50vw' }}
                                 {...(loading && { disabled: true })}
                             />}
 
