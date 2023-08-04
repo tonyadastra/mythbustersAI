@@ -2,6 +2,21 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import DebateContext from '../contexts/DebateContext';
 import api from '../api';
 // import audio from '../assets/audio/output.mp3';
+
+const removeDuplicates = (claims) => {
+    let uniqueClaims = [];
+    let map = new Map();
+    for (let claim of claims) {
+        let key = `${claim.claim}-${claim.speaker}`;
+        if (!map.has(key)) {
+            map.set(key, true);
+            uniqueClaims.push(claim);
+        }
+    }
+    return uniqueClaims;
+}
+
+
 function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
     const { transcripts, setTranscripts, claims, setClaims, inSession, setInSession } = useContext(DebateContext); // [question, setQuestion
     const [isPlaying, setIsPlaying] = useState(true);
@@ -19,7 +34,7 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
 
     useEffect(() => {
         if (!audioRef.current) return;
-        
+
         if (isPlaying) {
             audioRef.current.play();
         } else {
@@ -82,7 +97,9 @@ function AudioPlayer({ audio, nextIndex, setCurrentIndex, audioPath = null }) {
                         //         c.claim === claim.claim && c.speaker === claim.speaker
                         //     ))
                         // );
-                        setClaims((prev) => [...prev.filter(c => c.claim !== claim.claim), ...newClaims]);
+                        const combinedClaims = [...claims, ...newClaims];
+                        const uniqueClaims = removeDuplicates(combinedClaims);
+                        setClaims(uniqueClaims);
 
                         // setClaims((prev) => [...prev, ...newClaims]);
                     } catch (e) {
